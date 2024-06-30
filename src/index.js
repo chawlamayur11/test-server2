@@ -1,18 +1,33 @@
-// make bluebird default Promise
-Promise = require('bluebird'); // eslint-disable-line no-global-assign
-const { port, env } = require('./config/vars');
-const logger = require('./config/logger');
-const app = require('./config/express');
-const mongoose = require('./config/mongoose');
+const http = require("http");
+const os = require('os');
+const networkInterfaces = os.networkInterfaces();
 
-// open mongoose connection
-mongoose.connect();
+const port = 3000;
 
-// listen to requests
-app.listen(port, () => logger.info(`server started on port ${port} (${env})`));
 
-/**
-* Exports express
-* @public
-*/
-module.exports = app;
+const server = http.createServer((req, res) => {
+  console.log(`Just got a request at ${req.url}!`);
+  if (req.method == "POST") {
+    let body = "";
+    req.on("data", function (data) {
+      body += data;
+    });
+    req.on("end", function () {
+      body = JSON.parse(JSON.parse(body));
+      console.log(body);
+      res.statusCode = 200;
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods","GET,PUT,POST,DELETE");
+      res.setHeader("Access-Control-Allow-Headers","X-Requested-With,Content-Type");
+      res.setHeader("Content-Type", "application/json");
+      res.end("test");
+    });
+  } else {
+    res.write('Yo!');
+    res.end();
+  }
+});
+
+server.listen(process.env.PORT || port, () => {
+  console.log(`Server running at http://${ipAddress}:${port}/`);
+});
