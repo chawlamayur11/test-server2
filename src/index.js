@@ -1,6 +1,4 @@
 const http = require("http");
-const os = require('os');
-const networkInterfaces = os.networkInterfaces();
 
 const port = 3000;
 
